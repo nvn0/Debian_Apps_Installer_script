@@ -1,148 +1,155 @@
-#!/bin/bash
-# Variables for colors(text)
-RED="\033[31m"
-Green="\033[0;32m"
-Yellow="\033[0;33m"
-Cyan="\033[0;36m"
-NC="\033[0m"
+#!/usr/bin/env bash
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
 
 
+DISTRO_CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
 
-echo -e "${Green}The script will install will start the instalation soon... ${NC}"
-sleep 3
-echo = ""
-echo -e "${Cyan}Installing Programs from apt...${NC}"
+DEBIAN_CODENAME=$(. /etc/os-release && echo "$DEBIAN_CODENAME")
+
 
 # Update repos
-echo "updating..."
+echo "updating apt sources..."
 sudo apt update
 
-# Programas do repositório
-echo = ""
-echo "installing nmap..."
-sudo apt install nmap -y
-echo = ""
-echo "installing Keepassxc..."
-sudo apt install keepassxc -y
-echo = ""
-echo "installing net-tools..."
+echo "${YELLOW}installing curl...${RESET}"
+sudo apt install curl
+echo
+
+echo "${YELLOW}installing net-tools...${RESET}"
 sudo apt install net-tools -y
-echo = ""
-echo "installing rkhunter..."
-sudo apt install rkhunter -y
-echo = ""
-echo "installing lynis..."
-sudo apt install lynis -y
-echo = ""
-echo "installing htop..."
-sudo apt install htop -y
-echo = ""
-echo "installing ranger..."
+echo
+
+echo "${YELLOW}installing ranger...${RESET}"
 sudo apt install ranger -y
-echo = ""
-echo "installing dconf-editor..."
-sudo apt install dconf-editor -y
-echo = ""
-echo "installing neofetch..."
-sudo apt install neofetch -y
-echo = ""
-echo "installing screenfetch..."
-sudo apt install screenfetch -y
-echo = ""
-echo "installing Notepadqq..."
-sudo apt install notepadqq -y
-echo = ""
-echo "installing Ruust-Lang..."
-sudo curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh -y
-echo = ""
-echo "installing gcc..."
-sudo apt install gcc -y
-echo = ""
-echo "installing build-essential..."
-sudo apt install build-essential -y
-echo = ""
-echo "installing mingw-w64..."
-sudo apt install mingw-w64 -y
+echo
 
 
-# Snaps
-echo = ""
-echo -e "${Cyan}Installing Snaps...${NC}"
-echo = ""
-echo "installing bashtop..."
-sudo snap install bashtop -y
-echo = ""
-echo "Installing Visual Studio Code..."
-sudo snap install code --classic -y
-echo = ""
-echo "Installing Icedrive..."
-sudo snap install icedrive -y
-
-# Programas Externos
-
-mkdir /home/$USER/Downloads/programs
-cd /home/$USER/Downloads/programs
-
-#wget -c {link}
-
-# Portmaster
-wget -c https://updates.safing.io/latest/linux_amd64/packages/portmaster-installer.deb
-
-
-
-sudo dpkg -i *.deb
-
-# Programas mais especificos
-echo = ""
-echo -e "${Cyan}Installing Specific Programs...${NC}"
-echo = ""
-echo "installing brave browser..."
-mkdir /home/$USER/Downloads/programs/brave
-cd /home/$USER/Downloads/programs/brave
-
-
-sudo apt install apt-transport-https curl
+# Install brave browser
+echo "${YELLOW}installing brave and brave origin browsers...${RESET}"
 
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+sudo curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources
 
 sudo apt update
 
-sudo apt install brave-browser -y
+sudo apt install brave-browser
 
+sudo apt install brave-origin
 
-echo = ""
-echo "installing signal..."
-
-mkdir /home/$USER/Downloads/programs/signal
-cd /home/$USER/Downloads/programs/signal
+echo
 
 
 
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+# Install signal
+echo "${YELLOW}installing signal...${RESET}"
 
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-  sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+curl https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 
-sudo apt update && sudo apt install signal-desktop -y
+# 2. Add our repository to your list of repositories:
+curl -o signal-desktop.sources https://updates.signal.org/static/desktop/apt/signal-desktop.sources
+cat signal-desktop.sources | sudo tee /etc/apt/sources.list.d/signal-desktop.sources > /dev/null
 
-echo = ""
-echo "installing element..."
-mkdir /home/$USER/Downloads/programs/element
-cd /home/$USER/Downloads/programs/element
+# 3. Update your package database and install Signal:
+sudo apt update && sudo apt install signal-desktop
 
-sudo apt install -y wget apt-transport-https
+echo
 
-sudo wget -O /usr/share/keyrings/riot-im-archive-keyring.gpg https://packages.riot.im/debian/riot-im-archive-keyring.gpg
 
-echo "deb [signed-by=/usr/share/keyrings/riot-im-archive-keyring.gpg] https://packages.riot.im/debian/ default main" | sudo tee /etc/apt/sources.list.d/riot-im.list
+
+# Insltall docker
+echo "${YELLOW}installing Docker...${RESET}"
+
+sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-doc docker-buildx podman-docker containerd runc | cut -f1)
+
+# Add Docker's official GPG key:
+sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+
+# Add the repository to Apt sources:
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(. /etc/os-release && echo "$DEBIAN_CODENAME")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
 
 sudo apt update
 
-sudo apt install element-desktop -y
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-echo = ""
-echo -e "${Green}installation complete!${NC}"
-echo " "
+echo
+
+
+#flatpak
+
+echo "${YELLOW}installing Kate...${RESET}"
+flatpak install flathub org.kde.kate -y
+echo
+
+
+
+echo "${YELLOW}installing KeepassXC...${RESET}"
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub org.keepassxc.KeePassXC -y
+echo
+
+
+echo "${YELLOW}installing Telegram...${RESET}"
+flatpak install flathub org.telegram.desktop -y
+echo
+
+
+echo "${YELLOW}installing Kate...${RESET}"
+flatpak install flathub org.gnome.gedit
+echo
+
+
+echo "${YELLOW}installing LocalSend...${RESET}"
+flatpak install flathub org.localsend.localsend_app -y
+echo
+
+
+echo "${YELLOW}installing Okular...${RESET}"
+flatpak install flathub org.kde.okular -y
+echo
+
+
+echo "${YELLOW}installing Flatseal...${RESET}"
+flatpak install flathub com.github.tchx84.Flatseal -y
+echo
+
+
+echo "${YELLOW}installing Flameshot...${RESET}"
+flatpak install flathub org.flameshot.Flameshot -y
+echo
+
+
+echo "${YELLOW}installing Save Desktop app...${RESET}"
+flatpak install flathub io.github.vikdevelop.SaveDesktop -y
+echo
+
+
+echo "${YELLOW}installing OBS Studio...${RESET}"
+flatpak install flathub com.obsproject.Studio -y
+echo
+
+
+# Others
+echo "${YELLOW}installing Zed...${RESET}"
+curl -f https://zed.dev/install.sh | sh
+
