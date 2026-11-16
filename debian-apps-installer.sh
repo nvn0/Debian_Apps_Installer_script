@@ -17,6 +17,7 @@ DEBIAN_CODENAME=$(. /etc/os-release && echo "$DEBIAN_CODENAME")
 # Update repos
 echo "updating apt sources..."
 sudo apt update
+echo
 
 echo "${YELLOW}installing curl...${RESET}"
 sudo apt install curl
@@ -29,6 +30,12 @@ echo
 echo "${YELLOW}installing ranger...${RESET}"
 sudo apt install ranger -y
 echo
+
+echo "${YELLOW}installing gcc...${RESET}"
+sudo apt install gcc -y
+sudo apt install build-essential -y
+echo
+
 
 
 # Install brave browser
