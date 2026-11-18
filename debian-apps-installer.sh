@@ -44,15 +44,15 @@ sudo apt install gcc -y
 sudo apt install build-essential -y
 echo
 
-# Install rust
-echo "${YELLOW}installing rust...${RESET}"
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-echo
 
+# wget
 
-# Install typst
-echo "${YELLOW}installing typst...${RESET}"
-cargo install --locked typst-cli
+# Install Go (1.15.1)
+echo "${YELLOW}installing Obsidian...${RESET}"
+cd /tmp
+wget -c https://github.com/obsidianmd/obsidian-releases/releases/download/v1.15.1/obsidian_1.15.1_amd64.deb
+sudo dpkg -i obsidian_1.15.1_amd64.deb
+cd -
 echo
 
 
@@ -63,6 +63,10 @@ wget -c https://go.dev/dl/go1.27.4.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.27.4.linux-amd64.tar.gz
 cd -
 echo
+
+
+
+
 
 
 # Install brave browser
@@ -184,6 +188,20 @@ echo
 
 
 # Others
+
+# Install Zed
 echo "${YELLOW}installing Zed...${RESET}"
 curl -f https://zed.dev/install.sh | sh
+
+
+# Install rust
+echo "${YELLOW}installing rust...${RESET}"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+echo
+
+
+# Install typst
+echo "${YELLOW}installing typst...${RESET}"
+cargo install --locked typst-cli
+echo
 
