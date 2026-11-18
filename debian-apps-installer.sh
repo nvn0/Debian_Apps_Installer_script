@@ -36,6 +36,18 @@ sudo apt install gcc -y
 sudo apt install build-essential -y
 echo
 
+# Install rust
+echo "${YELLOW}installing rust...${RESET}"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+echo
+
+
+# Install typst
+echo "${YELLOW}installing typst...${RESET}"
+cargo install --locked typst-cli
+echo
+
+
 
 
 # Install brave browser
