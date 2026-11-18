@@ -23,8 +23,16 @@ echo "${YELLOW}installing curl...${RESET}"
 sudo apt install curl
 echo
 
+echo "${YELLOW}installing wget...${RESET}"
+sudo apt install wget
+echo
+
 echo "${YELLOW}installing net-tools...${RESET}"
 sudo apt install net-tools -y
+echo
+
+echo "${YELLOW}installing micro...${RESET}"
+sudo apt install micro
 echo
 
 echo "${YELLOW}installing ranger...${RESET}"
@@ -48,6 +56,13 @@ cargo install --locked typst-cli
 echo
 
 
+# Install Go (1.27.4)
+echo "${YELLOW}installing Go...${RESET}"
+cd /tmp
+wget -c https://go.dev/dl/go1.27.4.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.27.4.linux-amd64.tar.gz
+cd -
+echo
 
 
 # Install brave browser
